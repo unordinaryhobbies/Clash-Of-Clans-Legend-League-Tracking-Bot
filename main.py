@@ -32,7 +32,9 @@ async def Spy():
     print("Running...")
     Channel = Client.get_channel(int(ChannelID))
 
-    PlayersUpdate = coc.Run()
+    coroutine = asyncio.create_task(coc.Run())
+
+    PlayersUpdate = await coroutine
 
     if len(PlayersUpdate) == 0:
         return
