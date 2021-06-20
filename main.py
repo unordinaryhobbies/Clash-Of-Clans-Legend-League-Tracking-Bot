@@ -1,5 +1,5 @@
 import discord
-from discord.ext import commands, tasks
+from discord.ext import commands
 from clashstat import PlayerStats
 import os
 import asyncio
@@ -16,6 +16,14 @@ Token = os.environ.get('Token')
 
 coc = PlayerStats(ID, PW)
 
+@Client.event
+async def on_ready():
+    print("Bot Login as {}".format(Client))
+
+async def on_error(event, *args, **kwargs):
+    print('Something went wrong!')
+    logging.warning(traceback.format_exc())
+
 async def MakeEmbed(Name: str, TrophyChange: str) -> discord.Embed:
     if int(TrophyChange) > 0:
         TrophyInStr = "+" + TrophyChange
@@ -27,7 +35,6 @@ async def MakeEmbed(Name: str, TrophyChange: str) -> discord.Embed:
     embed = discord.Embed(title="{}  :  {}".format(Name, TrophyInStr), color=Color)
     return embed
 
-@tasks.loop(seconds=60)
 async def Spy():
     PlayersUpdate = await coc.Run()
 
@@ -36,22 +43,13 @@ async def Spy():
     Channel = Client.get_channel(int(ChannelID))
 
     if len(PlayersUpdate) == 0:
-        return loop.call_later(60, Spy)
+        return
     print("Size of Update = {}".format(len(PlayersUpdate)))
     for PlayerInfo in PlayersUpdate:
         embed = await MakeEmbed(PlayerInfo.get('name'), str(PlayerInfo.get('trophies')))
         await Channel.send(embed=embed)
 
-loop = asyncio.get_event_loop()
-loop.create_task(Spy())
-loop.run_forever()
 
-@Client.event
-async def on_ready():
-    print("Bot Login as {}".format(Client))
-
-async def on_error(event, *args, **kwargs):
-    print('Something went wrong!')
-    logging.warning(traceback.format_exc())
-
+Client.loop.create_task(Spy())
+Client.loop.run_until_complete()
 Client.run(Token)
