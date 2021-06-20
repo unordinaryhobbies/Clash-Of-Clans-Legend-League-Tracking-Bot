@@ -43,8 +43,8 @@ async def Spy():
         await Channel.send(embed=embed)
 
 loop = asyncio.get_event_loop()
-coro = loop.create_task(Spy())
-loop.run_forever(coro)
+loop.create_task(Spy())
+loop.run_forever()
 
 @Client.event
 async def on_ready():
