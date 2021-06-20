@@ -29,14 +29,12 @@ async def MakeEmbed(Name: str, TrophyChange: str) -> discord.Embed:
 
 @tasks.loop(seconds=60)
 async def Spy():
-    coroutine = asyncio.create_task(coc.Run())
-
-    PlayersUpdate = await coroutine
+    PlayersUpdate = await coc.Run()
 
     print("Running...")
 
     Channel = Client.get_channel(int(ChannelID))
-    
+
     if len(PlayersUpdate) == 0:
         return
     print("Size of Update = {}".format(len(PlayersUpdate)))
