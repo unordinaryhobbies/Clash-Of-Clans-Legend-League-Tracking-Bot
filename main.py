@@ -8,11 +8,6 @@ import logging, traceback
 
 Client = commands.Bot(command_prefix='@')
 
-os.environ['ID'] = 'bigmart000918@gmail.com'
-os.environ['PW'] = 'dhrans99'
-os.environ['Channel'] = '856111241083617311'
-os.environ['Token'] = 'ODM2MzEyMjMyMTQwNDcyMzYw.YIcKdg.U03WSUurQjt9q_qebLnsAL9dgLA'
-
 
 ID = os.environ.get('ID')
 PW = os.environ.get('PW')
