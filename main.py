@@ -49,7 +49,8 @@ async def Spy():
         embed = await MakeEmbed(PlayerInfo.get('name'), str(PlayerInfo.get('trophies')))
         await Channel.send(embed=embed)
 
+async def startBot():
+    await Client.start(Token)
 
-Client.loop.create_task(Spy())
-Client.loop.run_until_complete()
-Client.run(Token)
+asyncio.run(Spy())
+asyncio.run(startBot())
