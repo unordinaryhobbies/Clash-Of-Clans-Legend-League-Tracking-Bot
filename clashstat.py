@@ -106,7 +106,7 @@ class PlayerStats():
                 TrophyChange = self.FindTrophyDifference(CurrentPlayer, PastPlayer)
                 if TrophyChange == 0:
                     continue
-                if CurrentPlayer in PlayerUpdates:
+                if {'tag': CurrentPlayer.get('tag'), 'trophies': TrophyChange, 'name': CurrentPlayer.get('name')} in PlayerUpdates:
                     continue
                 PlayerUpdates.append({'tag': CurrentPlayer.get('tag'), 'trophies': TrophyChange, 'name': CurrentPlayer.get('name')})
         
