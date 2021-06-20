@@ -52,5 +52,5 @@ async def Spy():
 async def startBot():
     await Client.start(Token)
 
-asyncio.run(Spy())
 asyncio.run(startBot())
+asyncio.run(Spy())
