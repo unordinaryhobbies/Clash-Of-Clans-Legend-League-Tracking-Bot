@@ -90,22 +90,30 @@ class PlayerStats():
     def Run(self) -> None:
         PlayerUpdates: list = []
 
+        print("Getting Player List")
         self.GetPlayerList('player.txt')
 
+        print("Fetching User Trophies")
         CurrentPlayersInfo = asyncio.run(self.GetUserTrophies())
 
+        print("Check if file exist")
         self.MakeLegendDatabase(CurrentPlayersInfo)
 
+        print("Get Latest Info From File")
         PastPlayersData = self.GetPlayerLatestInfoThroughTagFile()
 
+        print("Compare Data")
         for CurrentPlayer, PastPlayer in zip(CurrentPlayersInfo, PastPlayersData):
             if self.CheckTrophyDifference(CurrentPlayer, PastPlayer):
-                self.UpdateDatabase(CurrentPlayer)
                 TrophyChange = self.FindTrophyDifference(CurrentPlayer, PastPlayer)
+
                 if TrophyChange == 0:
                     continue
                 if {'tag': CurrentPlayer.get('tag'), 'trophies': TrophyChange, 'name': CurrentPlayer.get('name')} in PlayerUpdates:
                     continue
+
+                self.UpdateDatabase(CurrentPlayer)
+
                 PlayerUpdates.append({'tag': CurrentPlayer.get('tag'), 'trophies': TrophyChange, 'name': CurrentPlayer.get('name')})
         
         print(PlayerUpdates)
