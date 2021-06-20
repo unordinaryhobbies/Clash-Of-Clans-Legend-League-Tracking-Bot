@@ -36,18 +36,19 @@ async def Spy():
     Channel = Client.get_channel(int(ChannelID))
 
     if len(PlayersUpdate) == 0:
-        return
+        return loop.call_later(60, Spy)
     print("Size of Update = {}".format(len(PlayersUpdate)))
     for PlayerInfo in PlayersUpdate:
         embed = await MakeEmbed(PlayerInfo.get('name'), str(PlayerInfo.get('trophies')))
         await Channel.send(embed=embed)
 
+loop = asyncio.get_event_loop()
+coro = loop.create_task(Spy())
+loop.run_forever(coro)
+
 @Client.event
 async def on_ready():
-    print("On_ready")
     print("Bot Login as {}".format(Client))
-
-    Spy.start()
 
 async def on_error(event, *args, **kwargs):
     print('Something went wrong!')
