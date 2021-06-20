@@ -80,8 +80,6 @@ class PlayerStats():
     def FindTrophyDifference(self, CurrentPlayerData: int, PastPlayerData: int) -> int:
         if CurrentPlayerData.get('tag') == PastPlayerData.get('tag'):
             try:
-                print(".{}.".format(CurrentPlayerData.get('trophies')))
-                print(".{}.".format(PastPlayerData.get('trophies')))
                 TrophyDifference: int = int(CurrentPlayerData.get('trophies') - int(PastPlayerData.get('trophies')))
                 return TrophyDifference
             except Exception:

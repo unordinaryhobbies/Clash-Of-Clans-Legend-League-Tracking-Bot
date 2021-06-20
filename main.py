@@ -27,7 +27,7 @@ async def MakeEmbed(Name: str, TrophyChange: str) -> discord.Embed:
     embed = discord.Embed(title="{}  :  {}".format(Name, TrophyInStr), color=Color)
     return embed
 
-@tasks.loop(minutes=2)
+@tasks.loop(seconds=60)
 async def Spy():
     print("Running...")
     Channel = Client.get_channel(int(ChannelID))
