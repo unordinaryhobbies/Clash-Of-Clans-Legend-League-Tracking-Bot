@@ -47,7 +47,8 @@ class PlayerStats():
                     break
                 self.PlayersTag.append(tag)
 
-    def MakeLegendDatabase(self, PlayersInfo: list) -> None:
+    @staticmethod
+    def MakeLegendDatabase(PlayersInfo: list) -> None:
         for PlayerInfo in PlayersInfo:
             if os.path.isfile('{}.txt'.format(PlayerInfo.get('tag'))) is False:
                 with open('{}.txt'.format(PlayerInfo.get('tag')), 'w') as f:
@@ -77,7 +78,8 @@ class PlayerStats():
             with open('{}.txt'.format(PlayerInfo.get('tag')), 'a') as a:
                 a.write('{}\n'.format(PlayerInfo.get('trophies')))
 
-    def CheckTrophyDifference(self, CurrentPlayerData: dict,
+    @staticmethod
+    def CheckTrophyDifference(CurrentPlayerData: dict,
                               PastPlayerDataInDB: dict) -> bool:
         if PastPlayerDataInDB.get('trophies') == '':
             return True
@@ -88,7 +90,8 @@ class PlayerStats():
             return False
         raise Exception("Tags unequal in CheckTrophyDiffernce()")
 
-    def FindTrophyDifference(self, CurrentPlayerData: dict,
+    @staticmethod
+    def FindTrophyDifference(CurrentPlayerData: dict,
                              PastPlayerData: dict) -> int:
         if CurrentPlayerData.get('tag') == PastPlayerData.get('tag'):
             try:
