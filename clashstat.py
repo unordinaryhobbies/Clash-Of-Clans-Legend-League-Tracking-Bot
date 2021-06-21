@@ -62,7 +62,7 @@ class PlayerStats():
     
     def UpdateDatabase(self, PlayerInfo: dict) -> None:
         if str(PlayerInfo.get('tag')):
-            if os.path.isfile('{}.txt'.format(PlayerInfo.get('tag'))) is False:
+            if os.path.isfile('./{}.txt'.format(PlayerInfo.get('tag'))) is False:
                 self.MakeLegendDatabase(PlayerInfo)
             with open('{}.txt'.format(PlayerInfo.get('tag')), 'a') as a:
                 a.write('{}\n'.format(PlayerInfo.get('trophies')))
@@ -118,3 +118,7 @@ class PlayerStats():
         
         print(PlayerUpdates)
         return PlayerUpdates
+
+if __name__ == '__main__':
+    coc = PlayerStats('bigmart000918@gmail.com', 'dhrans99')
+    print(asyncio.run(coc.Run()))

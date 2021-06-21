@@ -1,5 +1,5 @@
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 from clashstat import PlayerStats
 import os
 import asyncio
@@ -8,6 +8,11 @@ import logging, traceback
 
 Client = commands.Bot(command_prefix='@')
 
+
+os.environ['ID'] = 'bigmart000918@gmail.com'
+os.environ['PW'] = 'dhrans99'
+os.environ['Channel'] = '856111241083617311'
+os.environ['Token'] = 'ODU2MDk3ODE1NDgyMzM1MjUy.YM8FOA.42VBQUzdqiSOVXfy6Tg4zjR4lm0'
 
 ID = os.environ.get('ID')
 PW = os.environ.get('PW')
@@ -19,6 +24,8 @@ coc = PlayerStats(ID, PW)
 @Client.event
 async def on_ready():
     print("Bot Login as {}".format(Client))
+    
+    Spy.start()
 
 async def on_error(event, *args, **kwargs):
     print('Something went wrong!')
@@ -35,6 +42,7 @@ async def MakeEmbed(Name: str, TrophyChange: str) -> discord.Embed:
     embed = discord.Embed(title="{}  :  {}".format(Name, TrophyInStr), color=Color)
     return embed
 
+@tasks.loop(seconds=60)
 async def Spy():
     PlayersUpdate = await coc.Run()
 
@@ -49,8 +57,5 @@ async def Spy():
         embed = await MakeEmbed(PlayerInfo.get('name'), str(PlayerInfo.get('trophies')))
         await Channel.send(embed=embed)
 
-async def startBot():
-    await Client.start(Token)
 
-asyncio.run(startBot())
-asyncio.run(Spy())
+Client.run(Token)
