@@ -31,8 +31,12 @@ async def on_error(event, *args, **kwargs):
 async def MakeUrl(Name: str, Tags: str):
     RemoveSpecialChar = ''
     for ch in Name:
-    	if ord(ch) < 128:
-		    RemoveSpecialChar += ch.lower()
+        if ch == ' ':
+            RemoveSpecialChar += '-'
+
+    	elif ord(ch) < 128:
+            RemoveSpecialChar += ch.lower()
+            
     Identification = RemoveSpecialChar +"-"+ Tags[1:]
     Link = "https://www.clashofstats.com/players/{}/summary".format(Identification)
     return Link
