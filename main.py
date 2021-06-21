@@ -38,7 +38,7 @@ async def MakeUrl(Name: str, Tags: str):
         if ord(ch) == 32:
             RemoveSpecialChar += '-'
 
-        elif (ord(ch) < 128):
+        elif ord(ch) < 128:
             RemoveSpecialChar += ch.lower()
 
     Identification = RemoveSpecialChar + "-" + Tags[1:]
