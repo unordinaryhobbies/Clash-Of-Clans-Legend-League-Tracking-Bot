@@ -12,7 +12,7 @@ Client = commands.Bot(command_prefix='@')
 os.environ['ID'] = 'bigmart000918@gmail.com'
 os.environ['PW'] = 'dhrans99'
 os.environ['Channel'] = '856111241083617311'
-os.environ['Token'] = 'ODU2MDk3ODE1NDgyMzM1MjUy.YM8FOA.42VBQUzdqiSOVXfy6Tg4zjR4lm0'
+os.environ['Token'] = 'ODU2MDk3ODE1NDgyMzM1MjUy.YM8FOA.Sd2Ce35UzLBGDSP1x4v7OQ9V0Fw'
 
 ID = os.environ.get('ID')
 PW = os.environ.get('PW')
