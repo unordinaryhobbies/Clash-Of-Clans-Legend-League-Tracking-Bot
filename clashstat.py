@@ -67,17 +67,17 @@ class PlayerStats():
             with open('{}.txt'.format(PlayerInfo.get('tag')), 'a') as a:
                 a.write('{}\n'.format(PlayerInfo.get('trophies')))
 
-    def CheckTrophyDifference(self, CurrentPlayerData, PastPlayerDataInDB) -> bool:
-        if CurrentPlayerData.get('tag') == PastPlayerDataInDB.get('tag'):
-            if PastPlayerDataInDB.get('trophies') == '':
-                return True
+    def CheckTrophyDifference(self, CurrentPlayerData: dict, PastPlayerDataInDB: dict) -> bool:
+        if PastPlayerDataInDB.get('trophies') == '':
+            return True
+        elif CurrentPlayerData.get('tag') == PastPlayerDataInDB.get('tag'):
             if int(PastPlayerDataInDB.get('trophies')) != int(CurrentPlayerData.get('trophies')):
                 return True
             return False
         else:
             raise Exception("Tags unequal in CheckTrophyDiffernce()")
 
-    def FindTrophyDifference(self, CurrentPlayerData: int, PastPlayerData: int) -> int:
+    def FindTrophyDifference(self, CurrentPlayerData: dict, PastPlayerData: dict) -> int:
         if CurrentPlayerData.get('tag') == PastPlayerData.get('tag'):
             try:
                 TrophyDifference: int = int(CurrentPlayerData.get('trophies') - int(PastPlayerData.get('trophies')))
@@ -87,14 +87,16 @@ class PlayerStats():
         else:
             raise Exception("Tag not found in FindTrophyDifference()")
 
-    def Run(self) -> None:
+    async def Run(self, Location=None) -> None:
         PlayerUpdates: list = []
 
         print("Getting Player List")
+        if isinstance(Location, type(None)) is False:
+            os.chdir(Location)
         self.GetPlayerList('player.txt')
 
         print("Fetching User Trophies")
-        CurrentPlayersInfo = asyncio.run(self.GetUserTrophies())
+        CurrentPlayersInfo = await self.GetUserTrophies()
 
         print("Check if file exist")
         self.MakeLegendDatabase(CurrentPlayersInfo)
@@ -107,18 +109,17 @@ class PlayerStats():
             if self.CheckTrophyDifference(CurrentPlayer, PastPlayer):
                 TrophyChange = self.FindTrophyDifference(CurrentPlayer, PastPlayer)
 
+                self.UpdateDatabase(CurrentPlayer)
                 if TrophyChange == 0:
                     continue
                 if {'tag': CurrentPlayer.get('tag'), 'trophies': TrophyChange, 'name': CurrentPlayer.get('name')} in PlayerUpdates:
                     continue
 
-                self.UpdateDatabase(CurrentPlayer)
-
                 PlayerUpdates.append({'tag': CurrentPlayer.get('tag'), 'trophies': TrophyChange, 'name': CurrentPlayer.get('name')})
         
-        print(PlayerUpdates)
         return PlayerUpdates
 
 if __name__ == '__main__':
+    print(os.getcwd())
     coc = PlayerStats('bigmart000918@gmail.com', 'dhrans99')
     print(asyncio.run(coc.Run()))

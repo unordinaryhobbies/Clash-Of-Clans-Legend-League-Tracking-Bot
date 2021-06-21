@@ -8,11 +8,14 @@ import logging, traceback
 
 Client = commands.Bot(command_prefix='@')
 
-ID = os.environ.get('ID')
-PW = os.environ.get('PW')
-ChannelID = os.environ.get('Channel')
-Token = os.environ.get('Token')
-
+# ID = os.environ.get('ID')
+# PW = os.environ.get('PW')
+# ChannelID = os.environ.get('Channel')
+# Token = os.environ.get('Token')
+ID = 'bigmart000918@gmail.com'
+PW = 'dhrans99'
+ChannelID = '856111241083617311'
+Token = 'ODU2MDk3ODE1NDgyMzM1MjUy.YM8FOA.Sd2Ce35UzLBGDSP1x4v7OQ9V0Fw'
 coc = PlayerStats(ID, PW)
 
 @Client.event
