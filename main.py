@@ -6,7 +6,6 @@ import asyncio
 import logging
 import traceback
 
-
 Client = commands.Bot(command_prefix='@')
 
 # ID = os.environ.get('ID')
@@ -39,7 +38,7 @@ async def MakeUrl(Name: str, Tags: str):
         if ord(ch) == 32:
             RemoveSpecialChar += '-'
 
-        elif (ord(ch) < 128):
+        elif ord(ch) < 128:
             RemoveSpecialChar += ch.lower()
 
     Identification = RemoveSpecialChar + "-" + Tags[1:]
@@ -56,7 +55,9 @@ async def MakeEmbed(Name: str, TrophyChange: str, Link: str) -> discord.Embed:
         TrophyInStr = TrophyChange
         Color = 0xFF8CFF
 
-    embed = discord.Embed(title="{:>15}  :  {}".format(Name, TrophyInStr), color=Color, url=Link)
+    embed = discord.Embed(title="{} : {}".format(Name, TrophyInStr),
+                          color=Color,
+                          url=Link)
     return embed
 
 
@@ -72,7 +73,8 @@ async def Spy():
     print("Size of Update = {}".format(len(PlayersUpdate)))
     for PlayerInfo in PlayersUpdate:
         Link = await MakeUrl(PlayerInfo.get('name'), PlayerInfo.get('tag'))
-        embed = await MakeEmbed(PlayerInfo.get('name'), str(PlayerInfo.get('trophies')), Link)
+        embed = await MakeEmbed(PlayerInfo.get('name'),
+                                str(PlayerInfo.get('trophies')), Link)
         await Channel.send(embed=embed)
 
 
