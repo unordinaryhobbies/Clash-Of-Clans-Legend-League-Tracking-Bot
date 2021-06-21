@@ -56,8 +56,7 @@ async def MakeEmbed(Name: str, TrophyChange: str, Link: str) -> discord.Embed:
         TrophyInStr = TrophyChange
         Color = 0xFF8CFF
 
-    embed = discord.Embed(title=Name, color=Color, url=Link,
-                          description=" : {}".format(TrophyInStr))
+    embed = discord.Embed(title="{} : {}".format(Name, TrophyInStr), color=Color, url=Link)
     return embed
 
 
