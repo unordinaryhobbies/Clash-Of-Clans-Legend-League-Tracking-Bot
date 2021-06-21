@@ -28,7 +28,16 @@ async def on_error(event, *args, **kwargs):
     print('Something went wrong!')
     logging.warning(traceback.format_exc())
 
-async def MakeEmbed(Name: str, TrophyChange: str) -> discord.Embed:
+async def MakeUrl(Name: str, Tags: str):
+    RemoveSpecialChar = ''
+    for ch in Name:
+    	if ord(ch) < 128:
+		    RemoveSpecialChar += ch.lower()
+    Identification = RemoveSpecialChar +"-"+ Tags[1:]
+    Link = "https://www.clashofstats.com/players/" + {} + "/summary".format(Identification)
+    return Link
+    
+async def MakeEmbed(Name: str, TrophyChange: str, Link: str) -> discord.Embed:
     if int(TrophyChange) > 0:
         TrophyInStr = "+" + TrophyChange
         Color = 0x00aaaa
@@ -36,7 +45,8 @@ async def MakeEmbed(Name: str, TrophyChange: str) -> discord.Embed:
         TrophyInStr = TrophyChange
         Color = 0xFF8CFF
     
-    embed = discord.Embed(title="{}  :  {}".format(Name, TrophyInStr), color=Color)
+    embed = discord.Embed(title="{} : ".format(TrophyInStr), color=Color, url=Link,\
+        description=Name)
     return embed
 
 @tasks.loop(seconds=60)
@@ -46,12 +56,12 @@ async def Spy():
     print("Running...")
 
     Channel = Client.get_channel(int(ChannelID))
-
     if len(PlayersUpdate) == 0:
         return
     print("Size of Update = {}".format(len(PlayersUpdate)))
     for PlayerInfo in PlayersUpdate:
-        embed = await MakeEmbed(PlayerInfo.get('name'), str(PlayerInfo.get('trophies')))
+        Link = await MakeUrl(PlayerInfo.get('name'), PlayerInfo.get('tag'))
+        embed = await MakeEmbed(PlayerInfo.get('name'), str(PlayerInfo.get('trophies')), Link)
         await Channel.send(embed=embed)
 
 
