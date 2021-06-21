@@ -87,14 +87,14 @@ class PlayerStats():
         else:
             raise Exception("Tag not found in FindTrophyDifference()")
 
-    async def Run(self) -> None:
+    def Run(self) -> None:
         PlayerUpdates: list = []
 
         print("Getting Player List")
         self.GetPlayerList('player.txt')
 
         print("Fetching User Trophies")
-        CurrentPlayersInfo = await self.GetUserTrophies()
+        CurrentPlayersInfo = asyncio.run(self.GetUserTrophies())
 
         print("Check if file exist")
         self.MakeLegendDatabase(CurrentPlayersInfo)
