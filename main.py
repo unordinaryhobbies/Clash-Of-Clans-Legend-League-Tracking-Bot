@@ -34,7 +34,7 @@ async def MakeUrl(Name: str, Tags: str):
     	if ord(ch) < 128:
 		    RemoveSpecialChar += ch.lower()
     Identification = RemoveSpecialChar +"-"+ Tags[1:]
-    Link = "https://www.clashofstats.com/players/{}"/summary".format(Identification)
+    Link = "https://www.clashofstats.com/players/{}/summary".format(Identification)
     return Link
     
 async def MakeEmbed(Name: str, TrophyChange: str, Link: str) -> discord.Embed:
