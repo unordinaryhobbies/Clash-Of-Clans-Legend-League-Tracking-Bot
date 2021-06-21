@@ -116,7 +116,7 @@ class PlayerStats():
                     continue
 
                 PlayerUpdates.append({'tag': CurrentPlayer.get('tag'), 'trophies': TrophyChange, 'name': CurrentPlayer.get('name')})
-        
+        print(PlayerUpdates)
         return PlayerUpdates
 
 if __name__ == '__main__':
