@@ -70,12 +70,11 @@ class PlayerStats():
     def CheckTrophyDifference(self, CurrentPlayerData: dict, PastPlayerDataInDB: dict) -> bool:
         if PastPlayerDataInDB.get('trophies') == '':
             return True
-        elif CurrentPlayerData.get('tag') == PastPlayerDataInDB.get('tag'):
+        if CurrentPlayerData.get('tag') == PastPlayerDataInDB.get('tag'):
             if int(PastPlayerDataInDB.get('trophies')) != int(CurrentPlayerData.get('trophies')):
                 return True
             return False
-        else:
-            raise Exception("Tags unequal in CheckTrophyDiffernce()")
+        raise Exception("Tags unequal in CheckTrophyDiffernce()")
 
     def FindTrophyDifference(self, CurrentPlayerData: dict, PastPlayerData: dict) -> int:
         if CurrentPlayerData.get('tag') == PastPlayerData.get('tag'):
