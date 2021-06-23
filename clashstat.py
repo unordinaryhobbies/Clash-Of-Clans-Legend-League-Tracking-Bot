@@ -143,11 +143,6 @@ class PlayerStats():
                     'trophies': TrophyChange,
                     'name': CurrentPlayer.get('name')
                 })
+        self.PlayersTag.clear()
         print(PlayerUpdates)
         return PlayerUpdates
-
-
-if __name__ == '__main__':
-    print(os.getcwd())
-    coc = PlayerStats('bigmart000918@gmail.com', 'dhrans99')
-    print(asyncio.run(coc.Run()))
