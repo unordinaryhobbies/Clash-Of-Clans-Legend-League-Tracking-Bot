@@ -8,14 +8,13 @@ import traceback
 
 Client = commands.Bot(command_prefix='@')
 
-# ID = os.environ.get('ID')
-# PW = os.environ.get('PW')
-# ChannelID = os.environ.get('Channel')
-# Token = os.environ.get('Token')
-ID = 'bigmart000918@gmail.com'
-PW = 'dhrans99'
-ChannelID = '856111241083617311'
-Token = 'ODU2MDk3ODE1NDgyMzM1MjUy.YM8FOA.Sd2Ce35UzLBGDSP1x4v7OQ9V0Fw'
+ID = os.environ.get('ID')
+PW = os.environ.get('PW')
+ChannelID = os.environ.get('Channel')
+ChannelID2 = os.environ.get('Channel')
+Token = os.environ.get('Token')
+
+ChannelIDs = [ChannelID, ChannelID2]
 coc = PlayerStats(ID, PW)
 
 
@@ -63,11 +62,15 @@ async def MakeEmbed(Name: str, TrophyChange: str, Link: str) -> discord.Embed:
 
 @tasks.loop(seconds=60)
 async def Spy():
+    ChannelIDList = []
     PlayersUpdate = await coc.Run()
 
     print("Running...")
 
-    Channel = Client.get_channel(int(ChannelID))
+    for channelID in ChannelIDs:
+        Channel = Client.get_channel(int(channelID))
+        ChannelIDList.append(Channel)
+
     if len(PlayersUpdate) == 0:
         return
     print("Size of Update = {}".format(len(PlayersUpdate)))
@@ -75,7 +78,8 @@ async def Spy():
         Link = await MakeUrl(PlayerInfo.get('name'), PlayerInfo.get('tag'))
         embed = await MakeEmbed(PlayerInfo.get('name'),
                                 str(PlayerInfo.get('trophies')), Link)
-        await Channel.send(embed=embed)
+        for channelID in ChannelIDList:
+            await channelID.send(embed=embed)
 
 
 Client.run(Token)
