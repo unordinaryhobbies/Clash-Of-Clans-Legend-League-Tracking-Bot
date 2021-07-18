@@ -11,7 +11,7 @@ Client = commands.Bot(command_prefix='@')
 ID = os.environ.get('ID')
 PW = os.environ.get('PW')
 ChannelID = os.environ.get('Channel')
-ChannelID2 = os.environ.get('Channel')
+ChannelID2 = os.environ.get('Channel2')
 Token = os.environ.get('Token')
 
 ChannelIDs = [ChannelID, ChannelID2]
