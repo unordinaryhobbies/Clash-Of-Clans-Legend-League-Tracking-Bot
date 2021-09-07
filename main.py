@@ -5,6 +5,7 @@ import os
 import asyncio
 import logging
 import traceback
+import clashstat
 
 Client = commands.Bot(command_prefix='@')
 
