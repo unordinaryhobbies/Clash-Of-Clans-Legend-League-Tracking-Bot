@@ -90,8 +90,8 @@ class PlayerStats():
             TrophyDifferenceCollection[tag] = \
                 {'trophies': TrophyDifference, 'name': NewPlayersInfo[tag].get('name'), 'tag': tag}
 
-            self.PrevPlayersFullInfo[tag] = \
-                {'trophies': NewPlayersInfo[tag].get('trophies'), 'name': NewPlayersInfo[tag].get('name'), 'tag': tag} #type: ignore
+        
+        self.PrevPlayersFullInfo = NewPlayersInfo #type: ignore
         return TrophyDifferenceCollection
     
     async def Run(self):
