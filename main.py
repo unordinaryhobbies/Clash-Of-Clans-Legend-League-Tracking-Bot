@@ -5,14 +5,22 @@ import os
 
 Client = commands.Bot(command_prefix='@')
 
-ID = os.environ.get('ID')
-PW = os.environ.get('PW')
-ChannelID = os.environ.get('Channel')
-ChannelID2 = os.environ.get('Channel2')
-Token = os.environ.get('Token')
+# ID = os.environ.get('ID')
+# PW = os.environ.get('PW')
+# ChannelID = os.environ.get('Channel')
+# ChannelID2 = os.environ.get('Channel2')
+# Token = os.environ.get('Token')
+# ChannelIDs = [ChannelID, ChannelID2]
+ChannelID = 788750198067036160
+ChannelID2 = 872509074871287838
+ID = 'bigmart0918@gmail.com'
+PW = 'dhrans99'
+Token = 'ODcyNTA3Mjg4MTc3NDkxOTk4.YQq3uw.EHQoyN-ykQjfXmaNlLpt_Y1t2BA'
 ChannelIDs = [ChannelID, ChannelID2]
 coc = PlayerStats(ID, PW, 'player.txt') #type: ignore
 coc.GetPlayerList()
+
+#########################
 
 @Client.event
 async def on_ready():

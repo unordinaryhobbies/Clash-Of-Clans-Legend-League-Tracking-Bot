@@ -2,6 +2,7 @@ import coc #type: ignore
 import nest_asyncio #type: ignore
 import asyncio
 from typing import List, Dict, Optional, Union, Any
+import time
 
 class PlayerStats:
     def __init__(self, ID: str, Password: str, filename: str) -> None:
@@ -62,7 +63,7 @@ class PlayerStats:
             if isinstance(profile_1, type(None)) or isinstance(profile_2, type(None)):
                 print(f"Error!: profile_1: {profile_1}, profile_2: {profile_2}")
                 return False
-            return profile_1.get('trophies') == profile_2.get('trophies') #type: ignore
+            return profile_1['trophies'] == profile_2['trophies'] #type: ignore
         
         #If nothing is in the prev player info list
         #return every player info
@@ -70,10 +71,12 @@ class PlayerStats:
             return NewPlayersInfo
 
         UpdateRequiredInfo: Dict[str, Dict[str, Union[str, int]]] = {}
-        for tag in self.PlayersTag:
-            if not IsItSameTrophies(NewPlayersInfo.get(tag), self.PrevPlayersFullInfo.get(tag)):
-                UpdateRequiredInfo.update({tag: NewPlayersInfo.get(tag)})
-
+        for tag in NewPlayersInfo.keys():
+            try:
+                if not IsItSameTrophies(NewPlayersInfo[tag], self.PrevPlayersFullInfo[tag]):
+                    UpdateRequiredInfo.update({tag: NewPlayersInfo[tag]})
+            except KeyError:
+                print(f"TAG: {tag}, NOT FOUND, Please Check If Tag Exist!")
         return UpdateRequiredInfo
 
     def FindTrophyDifferenceAndUpdate(self, NewPlayersInfo: Dict[str, Dict[str, Union[str, int]]]) -> Dict[str, Dict[str, Union[str, int]]]:
@@ -106,6 +109,7 @@ class PlayerStats:
         """
         NewPlayersInfo = await self.GetUserTrophies()
         print("Get User Trophies")
+        print(f"NewPlayersInfo = {NewPlayersInfo},\n\n self.PrevPlayerInfo = {self.PrevPlayersFullInfo}")
         DifferenceDetectedPlayers = self.ComparePlayerData(NewPlayersInfo)
         print("Compare Player Data")
         TrophyDifference = self.FindTrophyDifferenceAndUpdate(DifferenceDetectedPlayers)
@@ -113,3 +117,13 @@ class PlayerStats:
 
         self.PrevPlayersFullInfo = NewPlayersInfo
         return TrophyDifference
+
+# if __name__ == '__main__':
+#     p = PlayerStats('bigmart0918@gmail.com', 'dhrans99', 'player.txt')
+#     p.GetPlayerList()
+#     while True:
+#         NewPlayersInfo = asyncio.run(p.GetUserTrophies())
+#         DifferenceDetectedPlayers = p.ComparePlayerData(NewPlayersInfo)
+#         print(DifferenceDetectedPlayers)
+#         print(p.FindTrophyDifferenceAndUpdate(DifferenceDetectedPlayers))
+#         time.sleep(30)
