@@ -80,6 +80,7 @@ class PlayerStats():
         Get the difference in trophy and return the information
         """
         if len(self.PrevPlayersFullInfo.keys()) == 0:
+            self.PrevPlayersFullInfo = NewPlayersInfo #type: ignore
             return {}
 
         FindTrophyDifference = lambda CurrInfo, PastInfo: CurrInfo.get('trophies') - PastInfo.get('trophies')
