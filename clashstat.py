@@ -83,11 +83,15 @@ class PlayerStats:
             self.PrevPlayersFullInfo = NewPlayersInfo #type: ignore
             return {}
 
-        FindTrophyDifference = lambda CurrInfo, PastInfo: CurrInfo.get('trophies') - PastInfo.get('trophies')
+        def FindTrophyDifference(CurrInfo, PastInfo):
+            if isinstance(CurrInfo, type(None)) or isinstance(PastInfo, type(None)):
+                print(f"Error!: CurrInfo: {CurrInfo}, PrevInfo: {PastInfo}")
+                return 0
+            return CurrInfo.get('trophies') - PastInfo.get('trophies')
 
         TrophyDifferenceCollection = {}
         for tag in NewPlayersInfo.keys():
-            TrophyDifference = FindTrophyDifference(NewPlayersInfo[tag], self.PrevPlayersFullInfo[tag])
+            TrophyDifference = FindTrophyDifference(NewPlayersInfo.get(tag), self.PrevPlayersFullInfo.get(tag))
             TrophyDifferenceCollection[tag] = \
                 {'trophies': TrophyDifference, 'name': NewPlayersInfo[tag].get('name'), 'tag': tag}
 
