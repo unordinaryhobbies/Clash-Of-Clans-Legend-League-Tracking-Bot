@@ -108,7 +108,7 @@ class PlayerStats:
         """
         NewPlayersInfo = await self.GetUserTrophies()
         print("Get User Trophies")
-        print(self.PrevPlayersFullInfo)
+        print(f"Prev: {self.PrevPlayersFullInfo},\n\n Curr: {NewPlayersInfo}")
         DifferenceDetectedPlayers = self.ComparePlayerData(NewPlayersInfo)
         print("Compare Player Data")
         TrophyDifference = self.FindTrophyDifferenceAndUpdate(DifferenceDetectedPlayers)
