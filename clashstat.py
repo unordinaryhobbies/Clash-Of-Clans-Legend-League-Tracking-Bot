@@ -102,7 +102,11 @@ class PlayerStats():
         3. If it is changed, Find the trophy difference and return this value
         """
         NewPlayersInfo = await self.GetUserTrophies()
+        print("Get User Trophies")
+        print(NewPlayersInfo)
         DifferenceDetectedPlayers = self.ComparePlayerData(NewPlayersInfo)
+        print("Compare Player Data")
         TrophyDifference = self.FindTrophyDifferenceAndUpdate(DifferenceDetectedPlayers)
+        print("Find Trophy Difference")
         print(TrophyDifference)
         return TrophyDifference
