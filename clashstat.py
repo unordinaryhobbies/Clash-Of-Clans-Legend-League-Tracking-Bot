@@ -80,7 +80,6 @@ class PlayerStats:
         Get the difference in trophy and return the information
         """
         if len(self.PrevPlayersFullInfo.keys()) == 0:
-            self.PrevPlayersFullInfo = NewPlayersInfo #type: ignore
             return {}
 
         def FindTrophyDifference(CurrInfo, PastInfo):
@@ -95,8 +94,6 @@ class PlayerStats:
             TrophyDifferenceCollection[tag] = \
                 {'trophies': TrophyDifference, 'name': NewPlayersInfo[tag].get('name'), 'tag': tag}
 
-        
-        self.PrevPlayersFullInfo = NewPlayersInfo #type: ignore
         return TrophyDifferenceCollection
     
     async def Run(self):
@@ -108,10 +105,10 @@ class PlayerStats:
         """
         NewPlayersInfo = await self.GetUserTrophies()
         print("Get User Trophies")
-        print(f"Prev: {self.PrevPlayersFullInfo},\n\n Curr: {NewPlayersInfo}")
         DifferenceDetectedPlayers = self.ComparePlayerData(NewPlayersInfo)
         print("Compare Player Data")
         TrophyDifference = self.FindTrophyDifferenceAndUpdate(DifferenceDetectedPlayers)
-        print("Find Trophy Difference")
-        print(TrophyDifference)
+        print(f"Find Trophy Difference: {TrophyDifference}")
+
+        self.PrevPlayersFullInfo = NewPlayersInfo
         return TrophyDifference
