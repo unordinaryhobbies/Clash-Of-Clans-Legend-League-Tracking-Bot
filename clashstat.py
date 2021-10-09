@@ -1,7 +1,8 @@
-import coc #type: ignore
-import nest_asyncio #type: ignore
+import coc  #type: ignore
+import nest_asyncio  #type: ignore
 import asyncio
 from typing import List, Dict, Optional, Union, Any
+
 
 class PlayerStats:
     def __init__(self, ID: str, Password: str, filename: str) -> None:
@@ -28,7 +29,10 @@ class PlayerStats:
         return list of dict[playertag, dict[player name, tag, trophies]]
         why?: to find playertag within O(1)
         """
-        tasks = list(map(lambda player: asyncio.create_task(self.client.get_player(player)), self.PlayersTag))
+        tasks = list(
+            map(
+                lambda player: asyncio.create_task(
+                    self.client.get_player(player)), self.PlayersTag))
 
         PlayersInfo = await asyncio.gather(*tasks)
 
@@ -59,11 +63,14 @@ class PlayerStats:
         def IsItSameTrophies(profile_1: Optional[Dict[str, Union[str, int]]],\
              profile_2: Optional[Dict[str, Union[str, int]]]) -> bool:
 
-            if isinstance(profile_1, type(None)) or isinstance(profile_2, type(None)):
-                print(f"Error!: profile_1: {profile_1}, profile_2: {profile_2}")
+            if isinstance(profile_1, type(None)) or isinstance(
+                    profile_2, type(None)):
+                print(
+                    f"Error!: profile_1: {profile_1}, profile_2: {profile_2}")
                 return False
-            return profile_1.get('trophies') == profile_2.get('trophies') #type: ignore
-        
+            return profile_1.get('trophies') == profile_2.get(
+                'trophies')  #type: ignore
+
         #If nothing is in the prev player info list
         #return every player info
         if len(self.PrevPlayersFullInfo.keys()) == 0:
@@ -71,12 +78,15 @@ class PlayerStats:
 
         UpdateRequiredInfo: Dict[str, Dict[str, Union[str, int]]] = {}
         for tag in self.PlayersTag:
-            if not IsItSameTrophies(NewPlayersInfo.get(tag), self.PrevPlayersFullInfo.get(tag)):
+            if not IsItSameTrophies(NewPlayersInfo.get(tag),
+                                    self.PrevPlayersFullInfo.get(tag)):
                 UpdateRequiredInfo.update({tag: NewPlayersInfo.get(tag)})
 
         return UpdateRequiredInfo
 
-    def FindTrophyDifferenceAndUpdate(self, NewPlayersInfo: Dict[str, Dict[str, Union[str, int]]]) -> Dict[str, Dict[str, Union[str, int]]]:
+    def FindTrophyDifferenceAndUpdate(
+        self, NewPlayersInfo: Dict[str, Dict[str, Union[str, int]]]
+    ) -> Dict[str, Dict[str, Union[str, int]]]:
         """
         Get the difference in trophy and return the information
         """
@@ -84,19 +94,21 @@ class PlayerStats:
             return {}
 
         def FindTrophyDifference(CurrInfo, PastInfo):
-            if isinstance(CurrInfo, type(None)) or isinstance(PastInfo, type(None)):
+            if isinstance(CurrInfo, type(None)) or isinstance(
+                    PastInfo, type(None)):
                 print(f"Error!: CurrInfo: {CurrInfo}, PrevInfo: {PastInfo}")
                 return 0
             return CurrInfo.get('trophies') - PastInfo.get('trophies')
 
         TrophyDifferenceCollection = {}
         for tag in NewPlayersInfo.keys():
-            TrophyDifference = FindTrophyDifference(NewPlayersInfo.get(tag), self.PrevPlayersFullInfo.get(tag))
+            TrophyDifference = FindTrophyDifference(
+                NewPlayersInfo.get(tag), self.PrevPlayersFullInfo.get(tag))
             TrophyDifferenceCollection[tag] = \
                 {'trophies': TrophyDifference, 'name': NewPlayersInfo[tag].get('name'), 'tag': tag}
 
         return TrophyDifferenceCollection
-    
+
     async def Run(self):
         """
         IMPORTANT: Call self.GetPlayerList() first before calling this function.
@@ -108,7 +120,8 @@ class PlayerStats:
         print("Get User Trophies")
         DifferenceDetectedPlayers = self.ComparePlayerData(NewPlayersInfo)
         print("Compare Player Data")
-        TrophyDifference = self.FindTrophyDifferenceAndUpdate(DifferenceDetectedPlayers)
+        TrophyDifference = self.FindTrophyDifferenceAndUpdate(
+            DifferenceDetectedPlayers)
         print(f"Find Trophy Difference: {TrophyDifference}")
 
         self.PrevPlayersFullInfo = NewPlayersInfo
