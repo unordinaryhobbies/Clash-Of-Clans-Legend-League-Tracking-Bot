@@ -1,11 +1,7 @@
-import discord
-from discord.ext import commands, tasks
+import discord #type: ignore
+from discord.ext import commands, tasks #type: ignore
 from clashstat import PlayerStats
 import os
-import asyncio
-import logging
-import traceback
-import clashstat
 
 Client = commands.Bot(command_prefix='@')
 
@@ -14,24 +10,16 @@ PW = os.environ.get('PW')
 ChannelID = os.environ.get('Channel')
 ChannelID2 = os.environ.get('Channel2')
 Token = os.environ.get('Token')
-
 ChannelIDs = [ChannelID, ChannelID2]
-coc = PlayerStats(ID, PW)
-
+coc = PlayerStats(ID, PW, 'player.txt') #type: ignore
+coc.GetPlayerList()
 
 @Client.event
 async def on_ready():
     print("Bot Login as {}".format(Client))
+    Main.start()
 
-    Spy.start()
-
-
-async def on_error(event, *args, **kwargs):
-    print('Something went wrong!')
-    logging.warning(traceback.format_exc())
-
-
-async def MakeUrl(Name: str, Tags: str):
+def MakeUrl(Name: str, Tags: str):
     RemoveSpecialChar = ''
 
     for ch in Name:
@@ -42,12 +30,11 @@ async def MakeUrl(Name: str, Tags: str):
             RemoveSpecialChar += ch.lower()
 
     Identification = RemoveSpecialChar + "-" + Tags[1:]
-    Link = "https://www.clashofstats.com/players/{}/summary".format(
-        Identification)
+    Link = f"https://www.clashofstats.com/players/{Identification}/summary"
     return Link
 
 
-async def MakeEmbed(Name: str, TrophyChange: str, Link: str) -> discord.Embed:
+def MakeEmbedMessageFormat(Name: str, TrophyChange: str, Link: str) -> discord.Embed:
     if int(TrophyChange) > 0:
         TrophyInStr = "+" + TrophyChange
         Color = 0x00aaaa
@@ -62,23 +49,22 @@ async def MakeEmbed(Name: str, TrophyChange: str, Link: str) -> discord.Embed:
 
 
 @tasks.loop(seconds=60)
-async def Spy():
-    ChannelIDList = []
+async def Main():
     PlayersUpdate = await coc.Run()
 
     print("Running...")
 
-    for channelID in ChannelIDs:
-        Channel = Client.get_channel(int(channelID))
-        ChannelIDList.append(Channel)
+    ChannelIDList = list(map(lambda channel: Client.get_channel(int(channel)), ChannelIDs))
 
     if len(PlayersUpdate) == 0:
         return
+
     print("Size of Update = {}".format(len(PlayersUpdate)))
-    for PlayerInfo in PlayersUpdate:
-        Link = await MakeUrl(PlayerInfo.get('name'), PlayerInfo.get('tag'))
-        embed = await MakeEmbed(PlayerInfo.get('name'),
-                                str(PlayerInfo.get('trophies')), Link)
+
+    for tag in PlayersUpdate.keys():
+        Link = MakeUrl(PlayersUpdate[tag].get('name'), PlayersUpdate[tag].get('tag'))
+        embed = MakeEmbedMessageFormat(PlayersUpdate[tag].get('name'),
+                                str(PlayersUpdate[tag].get('trophies')), Link)
         for channelID in ChannelIDList:
             await channelID.send(embed=embed)
 

@@ -1,16 +1,17 @@
-import coc
-import nest_asyncio
+import coc #type: ignore
+import nest_asyncio #type: ignore
 import asyncio
-import os
-
+from typing import List, Dict, Optional, Union, Any
 
 class PlayerStats():
-    def __init__(self, ID: str, Password: str) -> None:
+    def __init__(self, ID: str, Password: str, filename: str) -> None:
         nest_asyncio.apply()
         self.__ID: str = ID
         self.__PW: str = Password
-        self.PlayersTag: list = []
-        self.client: coc.client.Client = coc.login(self.__ID, self.__PW)
+        self.PlayersTag: List[str] = []
+        self.PrevPlayersFullInfo: Dict[str, Dict[str, Union[str, int]]] = {}
+        self.client = coc.login(self.__ID, self.__PW)
+        self.tags_collection_filename: str = filename
 
     def __del__(self) -> None:
         try:
@@ -19,130 +20,86 @@ class PlayerStats():
         except Exception:
             print("Client close failed")
 
-    async def GetUserTrophies(self) -> list:
-        PlayersCoroutine: list = []
-        for player in self.PlayersTag:
-            PlayersCoroutine.append(
-                asyncio.create_task(self.client.get_player(player)))
+    async def GetUserTrophies(self) -> Dict[str, Dict[str, Union[str, int]]]:
+        """
+        User Data in self.PlayersTag
+        Get user's trophies from the coc.client api
+        
+        return list of dict[playertag, dict[player name, tag, trophies]]
+        why?: to find playertag within O(1)
+        """
+        tasks = list(map(lambda player: asyncio.create_task(self.client.get_player(player)), self.PlayersTag))
 
-        PlayersDataPack: list = []
-        for Coroutine in PlayersCoroutine:
-            PlayersDataPack.append(await Coroutine)
+        PlayersInfo = await asyncio.gather(*tasks)
 
-        PlayersData: list = []
-        for PlayerData in PlayersDataPack:
-            PlayersData.append({
-                'name': PlayerData.name,
-                'tag': PlayerData.tag,
-                'trophies': PlayerData.trophies
-            })
-        return PlayersData
+        return dict(map(lambda player: \
+            (player.tag, {'name': player.name, 'tag': player.tag, 'trophies': player.trophies})\
+                ,PlayersInfo))
 
-    def GetPlayerList(self, Filename: str) -> None:
-        with open(Filename, 'r') as f:
+    def GetPlayerList(self) -> None:
+        """
+        Get target player tag from the given filename and store it in self.PlayersTag
+        """
+        with open(self.tags_collection_filename, 'r') as f:
             while True:
                 tag = f.readline()
-                tag = tag.replace('\n', '')
                 if tag == '':
                     break
+                tag = tag.replace('\n', '')
                 self.PlayersTag.append(tag)
 
-    @staticmethod
-    def MakeLegendDatabase(PlayersInfo: list) -> None:
-        for PlayerInfo in PlayersInfo:
-            if os.path.isfile('{}.txt'.format(PlayerInfo.get('tag'))) is False:
-                with open('{}.txt'.format(PlayerInfo.get('tag')), 'w') as f:
-                    pass
+    def ComparePlayerData(self, NewPlayersInfo: Dict[str, Dict[str, Union[str, int]]])\
+         -> Dict[str, Dict[str, Union[str, int]]]:
+        """
+        Compare trophies of NewPlayersInfo with self.PrevPlayersFullInfo
+        if some of them are different, return the players in dict{playertag, playerinfo} format
+        that have different trophy value 
+        """
 
-    def GetPlayerLatestInfoThroughTagFile(self) -> list:
-        PlayersDatabase = []
-        for Tag in self.PlayersTag:
-            LastestInfo = ''
-            with open('{}.txt'.format(Tag), 'r') as r:
-                while True:
-                    PlayerData = r.readline().replace('\n', '')
-                    if PlayerData == '':
-                        PlayersDatabase.append({
-                            'tag': Tag,
-                            'trophies': LastestInfo
-                        })
-                        break
-                    LastestInfo = PlayerData
-        return PlayersDatabase
+        def IsItSameTrophies(profile_1: Optional[Dict[str, Union[str, int]]],\
+             profile_2: Optional[Dict[str, Union[str, int]]]) -> bool:
 
-    def UpdateDatabase(self, PlayerInfo: dict) -> None:
-        if str(PlayerInfo.get('tag')):
-            if os.path.isfile('./{}.txt'.format(
-                    PlayerInfo.get('tag'))) is False:
-                self.MakeLegendDatabase(PlayerInfo)
-            with open('{}.txt'.format(PlayerInfo.get('tag')), 'a') as a:
-                a.write('{}\n'.format(PlayerInfo.get('trophies')))
+            if isinstance(profile_1, type(None)) and isinstance(profile_2, type(None)):
+                return False
+            return profile_1.get('trophies') == profile_2.get('trophies') #type: ignore
+        
+        #If nothing is in the prev player info list
+        #return every player info
+        if len(self.PrevPlayersFullInfo.keys()) == 0:
+            return NewPlayersInfo
 
-    @staticmethod
-    def CheckTrophyDifference(CurrentPlayerData: dict,
-                              PastPlayerDataInDB: dict) -> bool:
-        if PastPlayerDataInDB.get('trophies') == '':
-            return True
-        if CurrentPlayerData.get('tag') == PastPlayerDataInDB.get('tag'):
-            if int(PastPlayerDataInDB.get('trophies')) != int(
-                    CurrentPlayerData.get('trophies')):
-                return True
-            return False
-        raise Exception("Tags unequal in CheckTrophyDiffernce()")
+        UpdateRequiredInfo: Dict[str, Dict[str, Union[str, int]]] = {}
+        for tag in self.PlayersTag:
+            if not IsItSameTrophies(NewPlayersInfo.get(tag), self.PrevPlayersFullInfo.get(tag)):
+                UpdateRequiredInfo[tag] = NewPlayersInfo[tag]
 
-    @staticmethod
-    def FindTrophyDifference(CurrentPlayerData: dict,
-                             PastPlayerData: dict) -> int:
-        if CurrentPlayerData.get('tag') == PastPlayerData.get('tag'):
-            try:
-                TrophyDifference: int = int(
-                    CurrentPlayerData.get('trophies') -
-                    int(PastPlayerData.get('trophies')))
-                return TrophyDifference
-            except Exception:
-                return 0
-        else:
-            raise Exception("Tag not found in FindTrophyDifference()")
+        return UpdateRequiredInfo
 
-    async def Run(self, Location=None) -> None:
-        PlayerUpdates: list = []
+    def FindTrophyDifferenceAndUpdate(self, NewPlayersInfo: Dict[str, Dict[str, Union[str, int]]]) -> Dict[str, Dict[str, Union[str, int]]]:
+        """
+        Get the difference in trophy and return the information
+        """
+        FindTrophyDifference = lambda CurrInfo, PastInfo: CurrInfo.get('trophies') - PastInfo.get('trophies')
 
-        print("Getting Player List")
-        if isinstance(Location, type(None)) is False:
-            os.chdir(Location)
-        self.GetPlayerList('player.txt')
+        TrophyDifferenceCollection = {}
+        for tag in NewPlayersInfo.keys():
+            TrophyDifference = FindTrophyDifference(NewPlayersInfo[tag], self.PrevPlayersFullInfo[tag])
+            TrophyDifferenceCollection[tag] = \
+                {'trophies': TrophyDifference, 'name': NewPlayersInfo[tag].get('name'), 'tag': tag}
 
-        print("Fetching User Trophies")
-        CurrentPlayersInfo = await self.GetUserTrophies()
+            self.PrevPlayersFullInfo[tag] = \
+                {'trophies': NewPlayersInfo[tag].get('trophies'), 'name': NewPlayersInfo[tag].get('name'), 'tag': tag} #type: ignore
+        return TrophyDifferenceCollection
+    
+    async def Run(self):
+        """
+        IMPORTANT: Call self.GetPlayerList() first before calling this function.
+        1. Get data from self.PlayersTag then use GET method to fetch data from coc.api
+        2. Compare CurrentReceivedData with PrevReceivedData to check if players trophies changed.
+        3. If it is changed, Find the trophy difference and return this value
+        """
+        NewPlayersInfo = await self.GetUserTrophies()
+        DifferenceDetectedPlayers = self.ComparePlayerData(NewPlayersInfo)
+        TrophyDifference = self.FindTrophyDifferenceAndUpdate(DifferenceDetectedPlayers)
 
-        print("Check if file exist")
-        self.MakeLegendDatabase(CurrentPlayersInfo)
-
-        print("Get Latest Info From File")
-        PastPlayersData = self.GetPlayerLatestInfoThroughTagFile()
-
-        print("Compare Data")
-        for CurrentPlayer, PastPlayer in zip(CurrentPlayersInfo,
-                                             PastPlayersData):
-            if self.CheckTrophyDifference(CurrentPlayer, PastPlayer):
-                TrophyChange = self.FindTrophyDifference(
-                    CurrentPlayer, PastPlayer)
-
-                self.UpdateDatabase(CurrentPlayer)
-                if TrophyChange == 0:
-                    continue
-                if {
-                        'tag': CurrentPlayer.get('tag'),
-                        'trophies': TrophyChange,
-                        'name': CurrentPlayer.get('name')
-                } in PlayerUpdates:
-                    continue
-
-                PlayerUpdates.append({
-                    'tag': CurrentPlayer.get('tag'),
-                    'trophies': TrophyChange,
-                    'name': CurrentPlayer.get('name')
-                })
-        self.PlayersTag.clear()
-        print(PlayerUpdates)
-        return PlayerUpdates
+        return TrophyDifference
