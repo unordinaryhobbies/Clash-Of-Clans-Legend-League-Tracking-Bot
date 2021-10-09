@@ -1,5 +1,5 @@
-import discord #type: ignore
-from discord.ext import commands, tasks #type: ignore
+import discord  #type: ignore
+from discord.ext import commands, tasks  #type: ignore
 from clashstat import PlayerStats
 import os
 
@@ -12,15 +12,17 @@ ChannelID2 = os.environ.get('Channel2')
 Token = os.environ.get('Token')
 ChannelIDs = [ChannelID, ChannelID2]
 
-coc = PlayerStats(ID, PW, 'player.txt') #type: ignore
+coc = PlayerStats(ID, PW, 'player.txt')  #type: ignore
 coc.GetPlayerList()
 
 #########################
+
 
 @Client.event
 async def on_ready():
     print("Bot Login as {}".format(Client))
     Main.start()
+
 
 def MakeUrl(Name: str, Tags: str):
     RemoveSpecialChar = ''
@@ -37,7 +39,8 @@ def MakeUrl(Name: str, Tags: str):
     return Link
 
 
-def MakeEmbedMessageFormat(Name: str, TrophyChange: str, Link: str) -> discord.Embed:
+def MakeEmbedMessageFormat(Name: str, TrophyChange: str,
+                           Link: str) -> discord.Embed:
     if int(TrophyChange) > 0:
         TrophyInStr = "+" + TrophyChange
         Color = 0x00aaaa
@@ -57,7 +60,8 @@ async def Main():
 
     print("Running...")
 
-    ChannelIDList = list(map(lambda channel: Client.get_channel(int(channel)), ChannelIDs))
+    ChannelIDList = list(
+        map(lambda channel: Client.get_channel(int(channel)), ChannelIDs))
 
     if len(PlayersUpdate) == 0:
         return
@@ -65,9 +69,11 @@ async def Main():
     print("Size of Update = {}".format(len(PlayersUpdate)))
 
     for tag in PlayersUpdate.keys():
-        Link = MakeUrl(PlayersUpdate[tag].get('name'), PlayersUpdate[tag].get('tag'))
+        Link = MakeUrl(PlayersUpdate[tag].get('name'),
+                       PlayersUpdate[tag].get('tag'))
         embed = MakeEmbedMessageFormat(PlayersUpdate[tag].get('name'),
-                                str(PlayersUpdate[tag].get('trophies')), Link)
+                                       str(PlayersUpdate[tag].get('trophies')),
+                                       Link)
         for channelID in ChannelIDList:
             await channelID.send(embed=embed)
 
