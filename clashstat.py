@@ -3,7 +3,7 @@ import nest_asyncio #type: ignore
 import asyncio
 from typing import List, Dict, Optional, Union, Any
 
-class PlayerStats():
+class PlayerStats:
     def __init__(self, ID: str, Password: str, filename: str) -> None:
         nest_asyncio.apply()
         self.__ID: str = ID
@@ -59,7 +59,7 @@ class PlayerStats():
         def IsItSameTrophies(profile_1: Optional[Dict[str, Union[str, int]]],\
              profile_2: Optional[Dict[str, Union[str, int]]]) -> bool:
 
-            if isinstance(profile_1, type(None)) and isinstance(profile_2, type(None)):
+            if isinstance(profile_1, type(None)) or isinstance(profile_2, type(None)):
                 return False
             return profile_1.get('trophies') == profile_2.get('trophies') #type: ignore
         
