@@ -81,7 +81,7 @@ class PlayerStats():
         """
         if len(self.PrevPlayersFullInfo.keys()) == 0:
             return {}
-            
+
         FindTrophyDifference = lambda CurrInfo, PastInfo: CurrInfo.get('trophies') - PastInfo.get('trophies')
 
         TrophyDifferenceCollection = {}
@@ -104,5 +104,5 @@ class PlayerStats():
         NewPlayersInfo = await self.GetUserTrophies()
         DifferenceDetectedPlayers = self.ComparePlayerData(NewPlayersInfo)
         TrophyDifference = self.FindTrophyDifferenceAndUpdate(DifferenceDetectedPlayers)
-
+        print(TrophyDifference)
         return TrophyDifference
