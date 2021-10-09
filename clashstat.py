@@ -60,6 +60,7 @@ class PlayerStats:
              profile_2: Optional[Dict[str, Union[str, int]]]) -> bool:
 
             if isinstance(profile_1, type(None)) or isinstance(profile_2, type(None)):
+                print(f"Error!: profile_1: {profile_1}, profile_2: {profile_2}")
                 return False
             return profile_1.get('trophies') == profile_2.get('trophies') #type: ignore
         
@@ -71,7 +72,7 @@ class PlayerStats:
         UpdateRequiredInfo: Dict[str, Dict[str, Union[str, int]]] = {}
         for tag in self.PlayersTag:
             if not IsItSameTrophies(NewPlayersInfo.get(tag), self.PrevPlayersFullInfo.get(tag)):
-                UpdateRequiredInfo[tag] = NewPlayersInfo[tag]
+                UpdateRequiredInfo.update({tag: NewPlayersInfo.get(tag)})
 
         return UpdateRequiredInfo
 
