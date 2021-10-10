@@ -1,8 +1,7 @@
 import coc #type: ignore
 import nest_asyncio #type: ignore
 import asyncio
-from typing import List, Dict, Optional, Union, Any
-import time
+from typing import List, Dict, Optional, Union
 
 class PlayerStats:
     def __init__(self, ID: str, Password: str, filename: str) -> None:
