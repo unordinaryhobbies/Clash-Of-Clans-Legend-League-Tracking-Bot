@@ -117,13 +117,3 @@ class PlayerStats:
 
         self.PrevPlayersFullInfo = NewPlayersInfo
         return TrophyDifference
-
-# if __name__ == '__main__':
-#     p = PlayerStats('bigmart0918@gmail.com', 'dhrans99', 'player.txt')
-#     p.GetPlayerList()
-#     while True:
-#         NewPlayersInfo = asyncio.run(p.GetUserTrophies())
-#         DifferenceDetectedPlayers = p.ComparePlayerData(NewPlayersInfo)
-#         print(DifferenceDetectedPlayers)
-#         print(p.FindTrophyDifferenceAndUpdate(DifferenceDetectedPlayers))
-#         time.sleep(30)
