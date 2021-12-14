@@ -16,3 +16,10 @@ Key: `PW`, Value: `ClashOfClansDevelopersPassword`<br>
 Key: `Channel`, Value: `Which channel do you want the discord bot to print the legend league status? <Give it in ChannelID, Discord Bot should have access to that channel! else it may not work>`<br>
 Key: `Channel`, Value: `Which 2nd channel do you want the discord bot to print the legend league status? <Give it in ChannelID, Discord Bot should have access to that channel! else it may not work>`<br>
 Key: `Token`, Value: `Discord Bot Token`
+
+- **If you are having trouble understanding ClashOfClansDevelopersID & ClashOfClansDevelopersPW, [Click Here!](https://developer.clashofclans.com/#/register)**
+- **If you are having trouble understanding ChannelID, [Click Here!](https://www.remote.tools/remote-work/how-to-find-discord-id#server)**
+- **If you are having trouble understanding Discord Bot Token, [Click Here!](https://discord.com/developers/docs/game-sdk/applications)**
+
+
+**Heroku Configuration already done.. You just need to configure environment variable**
