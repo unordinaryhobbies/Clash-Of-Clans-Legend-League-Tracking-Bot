@@ -1,6 +1,8 @@
 # LegendDiscordBot
 Discord bot that tracks clash of clans legend league player's stats
 
+![alt text](https://github.com/daeisbae/Clash-Of-Clans-Legend-League-Tracking-Bot/blob/main/coc.jpg?raw=true)
+
 ## How to track certain player
 1. goto `player.txt`
 2. write the ***clash of clans player tags*** inside the `player.txt` file
